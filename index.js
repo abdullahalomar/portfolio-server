@@ -25,9 +25,12 @@ async function run() {
     await client.connect();
     console.log("Connected to MongoDB");
 
-    const db = client.db("assignment");
+    const db = client.db("portfolio");
     const collection = db.collection("users");
     const skillCollection = db.collection("skills");
+    const blogCollection = db.collection("blogs");
+    const projectCollection = db.collection("projects");
+    // const experienceCollection = db.collection("experiences");
 
     // User Registration
     app.post("/api/v1/register", async (req, res) => {
@@ -83,10 +86,11 @@ async function run() {
     });
 
     // ==============================================================
-    // Skill Post Operation
-    app.post("/api/v1/create-skill", async (req, res) => {
+    // Skill
+    // Post
+    app.post("/api/v1/skills", async (req, res) => {
       const { image, title } = req.body;
-      //   console.log(req.body);
+      console.log(req.body);
       try {
         // Insert Skill into the cloth collection
         const result = await skillCollection.insertOne({
@@ -108,8 +112,7 @@ async function run() {
       }
     });
 
-    // Get all Skill
-
+    // get all
     app.get("/api/v1/skills", async (req, res) => {
       try {
         const skills = await skillCollection.find({}).toArray();
@@ -126,7 +129,7 @@ async function run() {
       }
     });
 
-    // Skill Delete Operation
+    //delete
     app.delete("/api/v1/skills/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -134,7 +137,6 @@ async function run() {
       res.send(result);
     });
 
-    // Get a single cloth item by ID
     app.get("/api/v1/skills/:id", async (req, res) => {
       const skillId = req.params.id;
 
@@ -163,7 +165,7 @@ async function run() {
       }
     });
 
-    // Cloth Update Operation
+    //update
     app.put("/api/v1/skills/:id", async (req, res) => {
       const skillId = req.params.id;
       const { title, image } = req.body;
@@ -198,6 +200,247 @@ async function run() {
         });
       }
     });
+
+    //Skill end
+
+    // blog start
+    app.post("/api/v1/blogs", async (req, res) => {
+      const { image, title, description } = req.body;
+      console.log(req.body);
+      try {
+        // Insert Skill into the cloth collection
+        const result = await blogCollection.insertOne({
+          image,
+          title,
+          description,
+        });
+        console.log(result);
+
+        res.status(201).json({
+          success: true,
+          message: "blog added successfully",
+        });
+      } catch (error) {
+        console.error("Error adding blog:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error adding blog",
+        });
+      }
+    });
+
+    // Get all
+
+    app.get("/api/v1/blogs", async (req, res) => {
+      try {
+        const blogs = await blogCollection.find({}).toArray();
+        res.json({
+          success: true,
+          data: blogs,
+        });
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error fetching blogs",
+        });
+      }
+    });
+
+    //Delete Operation
+    app.delete("/api/v1/blogs/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await blogCollection.deleteOne(query, { new: true });
+      res.send(result);
+    });
+
+    // Get a single
+    app.get("/api/v1/blogs/:id", async (req, res) => {
+      const blogId = req.params.id;
+
+      try {
+        const blog = await blogCollection.findOne({
+          _id: new ObjectId(blogId),
+        });
+
+        if (blog) {
+          res.json({
+            success: true,
+            data: blog,
+          });
+        } else {
+          res.status(404).json({
+            success: false,
+            message: "blog not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching blog:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error fetching blog",
+        });
+      }
+    });
+
+    // Update Operation
+    app.put("/api/v1/blogs/:id", async (req, res) => {
+      const blogId = req.params.id;
+      const { title, image, description } = req.body;
+
+      try {
+        const filter = { _id: new ObjectId(blogId) };
+        const updateDoc = {
+          title,
+          image,
+          description,
+        };
+
+        const result = await blogCollection.replaceOne(filter, updateDoc, {
+          new: true,
+        });
+
+        if (result.modifiedCount === 1) {
+          res.json({
+            success: true,
+            message: "blog updated successfully",
+          });
+        } else {
+          res.status(404).json({
+            success: false,
+            message: "blog not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error updating blog:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error updating blog",
+        });
+      }
+    });
+    //blog end
+
+    // project start
+    app.post("/api/v1/projects", async (req, res) => {
+      const { image, title, description } = req.body;
+      console.log(req.body);
+      try {
+        // Insert Skill into the cloth collection
+        const result = await projectCollection.insertOne({
+          image,
+          title,
+          description,
+        });
+        console.log(result);
+
+        res.status(201).json({
+          success: true,
+          message: "projects added successfully",
+        });
+      } catch (error) {
+        console.error("Error adding projects:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error adding projects",
+        });
+      }
+    });
+
+    // Get all
+
+    app.get("/api/v1/projects", async (req, res) => {
+      try {
+        const projects = await projectCollection.find({}).toArray();
+        res.json({
+          success: true,
+          data: projects,
+        });
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error fetching projects",
+        });
+      }
+    });
+
+    //Delete Operation
+    app.delete("/api/v1/projects/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await projectCollection.deleteOne(query, { new: true });
+      res.send(result);
+    });
+
+    // Get a single
+    app.get("/api/v1/projects/:id", async (req, res) => {
+      const projectId = req.params.id;
+
+      try {
+        const project = await projectCollection.findOne({
+          _id: new ObjectId(projectId),
+        });
+
+        if (project) {
+          res.json({
+            success: true,
+            data: blog,
+          });
+        } else {
+          res.status(404).json({
+            success: false,
+            message: "projects not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error fetching projects",
+        });
+      }
+    });
+
+    // Update Operation
+    app.put("/api/v1/projects/:id", async (req, res) => {
+      const projectId = req.params.id;
+      const { title, image, description } = req.body;
+
+      try {
+        const filter = { _id: new ObjectId(projectId) };
+        const updateDoc = {
+          title,
+          image,
+          description,
+        };
+
+        const result = await projectCollection.replaceOne(filter, updateDoc, {
+          new: true,
+        });
+
+        if (result.modifiedCount === 1) {
+          res.json({
+            success: true,
+            message: "projects updated successfully",
+          });
+        } else {
+          res.status(404).json({
+            success: false,
+            message: "projects not found",
+          });
+        }
+      } catch (error) {
+        console.error("Error updating projects:", error);
+        res.status(500).json({
+          success: false,
+          message: "Error updating blprojectsog",
+        });
+      }
+    });
+    //project end
+
     // ==============================================================
 
     // Start the server
