@@ -324,14 +324,16 @@ async function run() {
 
     // project start
     app.post("/api/v1/projects", async (req, res) => {
-      const { image, title, description } = req.body;
+      const { title, description, category, technology, link } = req.body;
       console.log(req.body);
       try {
         // Insert Skill into the cloth collection
         const result = await projectCollection.insertOne({
-          image,
           title,
           description,
+          category,
+          technology,
+          link,
         });
         console.log(result);
 
@@ -406,14 +408,16 @@ async function run() {
     // Update Operation
     app.put("/api/v1/projects/:id", async (req, res) => {
       const projectId = req.params.id;
-      const { title, image, description } = req.body;
+      const { title, description, category, technology, link } = req.body;
 
       try {
         const filter = { _id: new ObjectId(projectId) };
         const updateDoc = {
           title,
-          image,
           description,
+          category,
+          technology,
+          link,
         };
 
         const result = await projectCollection.replaceOne(filter, updateDoc, {
@@ -435,7 +439,7 @@ async function run() {
         console.error("Error updating projects:", error);
         res.status(500).json({
           success: false,
-          message: "Error updating blprojectsog",
+          message: "Error updating projects",
         });
       }
     });
