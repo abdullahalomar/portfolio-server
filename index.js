@@ -66,6 +66,7 @@ async function run() {
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
+      console.log(user);
 
       // Compare hashed password
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -351,7 +352,6 @@ async function run() {
     });
 
     // Get all
-
     app.get("/api/v1/projects", async (req, res) => {
       try {
         const projects = await projectCollection.find({}).toArray();
@@ -388,19 +388,19 @@ async function run() {
         if (project) {
           res.json({
             success: true,
-            data: blog,
+            data: project,
           });
         } else {
           res.status(404).json({
             success: false,
-            message: "projects not found",
+            message: "project not found",
           });
         }
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching project:", error);
         res.status(500).json({
           success: false,
-          message: "Error fetching projects",
+          message: "Error fetching project",
         });
       }
     });
